@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block bodyId %}loginPage{% endblock %}
+
+{% block content %}
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $("input#id_st-email").focusout(checkEmailField);
+    });
+    
+    function checkEmailField(){
+        fieldValue = $("input#id_st-email").val();
+        $.ajax({
+            url:'/ajax/checkEmailField',
+            data:({valu                                                                         e : $fieldValue}),
+            type: 'GET',
+            success:function($data, $textStatus, $XMLHttpRequest){
+                if ($data !='') 
+                {
+                    alert($data);
+                }
+            
+            }
+        })
+    }
+</script>
+
+
+<h1>Creation de mon compte</h1>
+
+<form>
+    <p>
+        <label for="profileType">Vous etes:</label>
+            <select id="profileType">
+            <option value="student" {% if studentForm.is_bound %} selected="selected" {% endif %}>Etudiant</option>
+ 
+            <option value="employee" {% if employeeForm.is_bound %} selected="selected" {% endif %}>Employee</option>
+            </select>
+    </p>
+</form>
+
+<div id="form1">
+    <form action="register" method="get" id="studentForm">
+        {% csrf_token %}
+        {{ studentForm.as_p }} <!-- reproduire le formulaire StudentProfileForm dans html pour l'utilisation--> 
+        <p>
+            <input type="hidden" name="profileType" value="student" />
+            <input type="submit" value="Creer un compte" />
+        </p> 
+    </form>
+</div>
+
+
+
+<div id="form2">
+<form action="register" method="get" id="employeeForm">
+        {% csrf_token %}
+        <!--on recupere le formulaire 'employeeForm' de la fonction 'user_profile' de 'vews.py' -->
+        {{ employeeForm.as_p }} <!-- reproduire le formulaire employeeProfileForm dans html pour l'utilisation--> 
+        <p>
+            <input type="hidden" name="profileType" value="employee" />
+            <input type="submit" value="Creer un compte" />
+        </p> 
+</form>
+</div>
+
+<script type="text/javascript">
+    console.log()
+    function displayRightForm() {
+        if ($('#profileType').val() == "student") {
+            $('#form1').show();
+            $('#form2').hide();
+            
+        }
+        else {
+            $('#form2').show();
+            $('#form1').hide();
+        }
+    }
+    
+    $(document).ready(displayRightForm);
+    $('#profileType').change(displayRightForm);
+    
+</script>
+
+{% endblock%} 
+
+
